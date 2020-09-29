@@ -1,8 +1,9 @@
 import requests
 import base64
 from typing import Union
-from .properties import OAUTH_DOMAIN, PATH_GET_TOKEN
+from .properties import OAUTH_DOMAIN, PATH_GET_TOKEN, ServiceType
 from .message import *
+from .easycodefpy import Codef
 
 
 def request_token(client_id: str, client_secret: str) -> Union[dict, None]:
@@ -49,3 +50,32 @@ def request_product(url: str, token: str, body_str: str) -> dict:
         else:
             return MESSAGE_SERVER_ERROR
 
+
+def set_token(
+        client_id: str,
+        client_secret: str,
+        codef: Codef,
+        service_type: ServiceType
+):
+    """
+    코드에프 인스턴스에 액세스 토큰을 셋팅해준다.
+    최대 3회까지 시도한다.
+    :param client_id:
+    :param client_secret:
+    :param codef:
+    :param service_type:
+    :return:
+    """
+    repeat_cnt = 3
+    i = 0
+    if codef.get_access_token(service_type) == '':
+        while i < repeat_cnt:
+            token_dict = request_token(client_id, client_secret)
+            if token_dict is None:
+                i += 1
+                continue
+            token = token_dict['access_token']
+            if token is not None and token != '':
+                codef.set_access_token(token, service_type)
+                break
+            i += 1
