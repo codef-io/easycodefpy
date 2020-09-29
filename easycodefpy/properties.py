@@ -33,7 +33,7 @@ class ServiceType(Enum):
     SANDBOX = 2
 
 
-def get_codef_domain(service_type: ServiceType):
+def get_codef_domain(service_type: ServiceType) -> str:
     if service_type == ServiceType.PRODUCT:
         return API_DOMAIN
     elif service_type == ServiceType.DEMO:
