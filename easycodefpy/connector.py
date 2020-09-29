@@ -2,6 +2,7 @@ import requests
 import base64
 from typing import Union
 from .properties import OAUTH_DOMAIN, PATH_GET_TOKEN
+from .message import *
 
 
 def request_token(client_id: str, client_secret: str) -> Union[dict, None]:
@@ -25,4 +26,26 @@ def request_token(client_id: str, client_secret: str) -> Union[dict, None]:
             return None
         return res.json()
 
+
+def request_product(url: str, token: str, body_str: str) -> dict:
+    headers = {
+        'Accept': 'application/json',
+    }
+    if token != '' and token is not None:
+        headers['Authorization'] = 'Bearer ' + token
+    with requests.post(url, data=body_str, headers=headers) as res:
+        s_code = res.status_code
+        codes = requests.codes
+        if s_code == codes.ok:
+            return res.json()
+        elif s_code == codes.bad:
+            return MESSAGE_BAD_REQUEST
+        elif s_code == codes.unauthorized:
+            return MESSAGE_UNAUTHORIZED
+        elif s_code == codes.forbidden:
+            return MESSAGE_FORBIDDEN
+        elif s_code == codes.not_found:
+            return MESSAGE_NOT_FOUND
+        else:
+            return MESSAGE_SERVER_ERROR
 
