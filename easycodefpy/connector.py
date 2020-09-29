@@ -1,7 +1,12 @@
 import requests
 import base64
+import json
 from typing import Union
-from .properties import OAUTH_DOMAIN, PATH_GET_TOKEN, ServiceType
+from .properties import\
+    OAUTH_DOMAIN,\
+    PATH_GET_TOKEN,\
+    ServiceType,\
+    get_codef_domain
 from .message import *
 from .easycodefpy import Codef
 
@@ -29,6 +34,13 @@ def request_token(client_id: str, client_secret: str) -> Union[dict, None]:
 
 
 def request_product(url: str, token: str, body_str: str) -> dict:
+    """
+    상품 요청
+    :param url: 요청 URL
+    :param token: 액세스 토큰
+    :param body_str: post 요청 바디
+    :return:
+    """
     headers = {
         'Accept': 'application/json',
     }
@@ -79,3 +91,21 @@ def set_token(
                 codef.set_access_token(token, service_type)
                 break
             i += 1
+
+
+def excute(url_path: str, body: dict, codef: Codef, service_type: ServiceType) -> dict:
+    """
+    API 요청 실행 함수.
+    실제 사용자에게 제공되는 함수 내부에서 이 함수를 호출해서 사용할 것을 권장한다.
+    :param url_path: 요청 URL 경로
+    :param body: post 요청 바디
+    :param codef: codef 인스턴스
+    :param service_type: 서비스 타입
+    :return:
+    """
+    req_domain = get_codef_domain(service_type)
+    client_id, client_secret = codef.get_client_info(service_type)
+    set_token(client_id, client_secret, codef, service_type)
+    body = json.dumps(body)
+    return request_product(req_domain + url_path, codef.get_access_token(service_type), body)
+

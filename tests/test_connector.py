@@ -47,6 +47,13 @@ def test_set_token():
     assert token != ''
 
 
+def test_excute() :
+    codef = Codef()
+    param = create_param_for_create_cid()
+    res = excute(PATH_CREATE_ACCOUNT, param, codef, ServiceType.SANDBOX)
+    assert res is not None
+    assert exist_cid(res)
+
 # def test_fail_set_token_must_unauth():
 #     codef = Codef()
 #     codef.public_key = 'public_key'

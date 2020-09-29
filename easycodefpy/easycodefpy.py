@@ -1,4 +1,4 @@
-from .properties import ServiceType
+from .properties import ServiceType, SANDBOX_CLIENT_ID, SANDBOX_CLIENT_SECRET
 
 
 class AccessToken(object):
@@ -41,10 +41,19 @@ class Codef(object):
     def set_access_token(self, token: str, service_type: ServiceType):
         self.access_token.set_access_token(token, service_type)
 
-    def set_client_info(self, client_id, client_secret):
+    def get_client_info(self, service_type: ServiceType) -> (str, str):
+        if service_type == ServiceType.PRODUCT:
+            return self.client_id, self.client_secret
+        elif service_type == ServiceType.DEMO:
+            return self.demo_client_id, self.demo_client_secret
+        else:
+            return SANDBOX_CLIENT_ID, SANDBOX_CLIENT_SECRET
+
+    def set_client_info(self, client_id: str, client_secret: str):
         self.client_id = client_id
         self.client_secret = client_secret
 
-    def set_demo_client_info(self, client_id, client_secret):
+    def set_demo_client_info(self, client_id: str, client_secret: str):
         self.demo_client_id = client_id
         self.client_secret = client_secret
+
