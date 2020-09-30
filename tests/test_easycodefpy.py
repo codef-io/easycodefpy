@@ -107,6 +107,3 @@ def test_request_token():
     new_token = codef.request_token(service_type)
     assert expired_token != new_token
     assert expired_token != codef.get_access_token(service_type)
-
-
-

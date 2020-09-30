@@ -239,7 +239,7 @@ class Codef(object):
         :return: 보유 중인 유효한 토큰이 있는 경우 반환, 없는 경우 신규 발급 후 반환.
         """
         if not self.check_client_info(service_type):
-            return ''
+            raise Exception('Empty client id and client secret')
 
         access_token = self.get_access_token(service_type)
         if access_token is not None and access_token != '':
@@ -257,3 +257,21 @@ class Codef(object):
             new_token = token_dict['access_token']
             self.set_access_token(new_token, service_type)
             return new_token
+
+    def request_new_token(self, service_type: ServiceType) -> str:
+        """
+        새로운 토큰 반환 요청.
+        request_token 메소드와 다른 점은 무조건 새로운 토큰을 요청한다는 것이다.
+        :param service_type: 서비스 타입
+        :return: 새로운 토큰
+        """
+        if not self.check_client_info(service_type):
+            raise Exception('Empty client id and client secret')
+
+        client_id, client_secret = self.get_client_info(service_type)
+        token_dict = request_token(client_id, client_secret)
+        if token_dict is not None:
+            new_token = token_dict['access_token']
+            self.set_access_token(new_token, service_type)
+            return new_token
+        return ''
