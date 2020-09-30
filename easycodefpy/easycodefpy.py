@@ -1,7 +1,16 @@
 import json
 import re
 from .connector import execute
-from .properties import ServiceType, SANDBOX_CLIENT_ID, SANDBOX_CLIENT_SECRET
+from .properties import\
+    ServiceType,\
+    SANDBOX_CLIENT_ID,\
+    SANDBOX_CLIENT_SECRET,\
+    PATH_CREATE_ACCOUNT,\
+    PATH_ADD_ACCOUNT,\
+    PATH_UPDATE_ACCOUNT,\
+    PATH_DELETE_ACCOUNT,\
+    PATH_GET_ACCOUNT_LIST,\
+    PATH_GET_CID_LIST
 from .message import\
     MESSAGE_EMPTY_CLIENT_INFO,\
     MESSAGE_EMPTY_PUBLIC_KEY,\
@@ -166,3 +175,57 @@ class Codef(object):
             return not (trim_all(self.demo_client_id) == '' or trim_all(self.demo_client_secret) == '')
         else:
             return not (trim_all(SANDBOX_CLIENT_ID) == '' or trim_all(SANDBOX_CLIENT_SECRET) == '')
+
+    def create_account(self, service_type: ServiceType, param: dict) -> str:
+        """
+        connectedID 발급을 위한 계정 등록
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_CREATE_ACCOUNT, service_type, param)
+
+    def add_account(self, service_type: ServiceType, param: dict) -> str:
+        """
+        계정정보 추가
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_ADD_ACCOUNT, service_type, param)
+
+    def update_account(self, service_type: ServiceType, param: dict) -> str:
+        """
+        계정정보 수정
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_UPDATE_ACCOUNT, service_type, param)
+
+    def delete_account(self, service_type: ServiceType, param: dict) -> str:
+        """
+        계정정보 삭제
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_DELETE_ACCOUNT, service_type, param)
+
+    def get_account_list(self, service_type: ServiceType, param: dict) -> str:
+        """
+        계정 정보 리스트 조회
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_GET_ACCOUNT_LIST, service_type, param)
+
+    def get_connected_id_list(self, service_type: ServiceType, param: dict) -> str:
+        """
+        connectedID로 등록된 계정 목록 조회
+        :param service_type: 서비스 타입
+        :param param: 요청 파라미터
+        :return:
+        """
+        return self.request_product(PATH_GET_CID_LIST, service_type, param)
