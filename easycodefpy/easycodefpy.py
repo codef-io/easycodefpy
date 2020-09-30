@@ -5,29 +5,60 @@ from .properties import ServiceType, SANDBOX_CLIENT_ID, SANDBOX_CLIENT_SECRET
 from .message import\
     MESSAGE_EMPTY_CLIENT_INFO,\
     MESSAGE_EMPTY_PUBLIC_KEY,\
-    MESSAGE_INVALID_2WAY_KEYWORD
+    MESSAGE_INVALID_2WAY_KEYWORD,\
+    MESSAGE_INVALID_2WAY_INFO
 
 pattern = re.compile(r'\s+')
 
 
-def trim_all(sentence: str):
+def trim_all(sentence: str) -> str:
     return re.sub(pattern, '', sentence)
 
 
-def is_empty_two_way_keyword(data: dict) -> bool:
+def _is_empty_two_way_keyword(data: dict) -> bool:
+    """
+    2way 키워드가 비워져 있는지 확인한다.
+    :param data: 파라미터
+    :return: 비워져 있을때 True
+    """
     if data is None:
         return True
 
     try:
-        data['is2Way']
+        _ = data['is2Way']
+        return False
     except KeyError:
         pass
     try:
-        data['twoWayInfo']
+        _ = data['twoWayInfo']
+        return False
     except KeyError:
         return True
 
-    return False
+
+def _check_need_value_in_two_way_info(two_way_info: dict) -> bool:
+    try:
+        return two_way_info['jobIndex'] is not None and\
+               two_way_info['threadIndex'] is not None and\
+               two_way_info['jti'] is not None and\
+               two_way_info['twoWayTimestamp'] is not None
+    except KeyError:
+        return False
+
+
+def _has_two_way_keyword(data: dict) -> bool:
+    try:
+        is_2way = data['is2Way']
+        if is_2way is None or type(is_2way) != bool:
+            return False
+
+        two_way_info = data['twoWayInfo']
+        if two_way_info is None or type(two_way_info) != dict:
+            return False
+
+        return _check_need_value_in_two_way_info(two_way_info)
+    except KeyError:
+        return False
 
 
 class AccessToken(object):
@@ -99,12 +130,28 @@ class Codef(object):
             return json.dumps(MESSAGE_EMPTY_PUBLIC_KEY, ensure_ascii=False)
 
         # 추가인증 키워드 체크
-        if not is_empty_two_way_keyword(param):
+        if not _is_empty_two_way_keyword(param):
             return json.dumps(MESSAGE_INVALID_2WAY_KEYWORD, ensure_ascii=False)
 
         res = execute(product_path, param, self, service_type)
         if res is None:
             return ''
+        return json.dumps(res, ensure_ascii=False)
+
+    def request_certification(self, product_path: str, service_type: ServiceType, param: dict) -> str:
+        # 클라이언트 정보 체크
+        if not self.check_client_info(service_type):
+            return json.dumps(MESSAGE_EMPTY_CLIENT_INFO, ensure_ascii=False)
+
+        # 퍼블릭키 정보 체크
+        if self.public_key is None or trim_all(self.public_key) == '':
+            return json.dumps(MESSAGE_EMPTY_PUBLIC_KEY, ensure_ascii=False)
+
+        # 추가인증 파라미터 필수 입력 체크
+        if not _has_two_way_keyword(param):
+            return json.dumps(MESSAGE_INVALID_2WAY_INFO, ensure_ascii=False)
+
+        res = execute(product_path, param, self, param)
         return json.dumps(res, ensure_ascii=False)
 
     def check_client_info(self, service_type: ServiceType) -> bool:
