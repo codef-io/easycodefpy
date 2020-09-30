@@ -1,6 +1,7 @@
 import json
 import re
-from .connector import execute
+import base64
+from .connector import execute, request_token
 from .properties import\
     ServiceType,\
     SANDBOX_CLIENT_ID,\
@@ -16,6 +17,7 @@ from .message import\
     MESSAGE_EMPTY_PUBLIC_KEY,\
     MESSAGE_INVALID_2WAY_KEYWORD,\
     MESSAGE_INVALID_2WAY_INFO
+from .util import check_validity
 
 pattern = re.compile(r'\s+')
 
@@ -229,3 +231,29 @@ class Codef(object):
         :return:
         """
         return self.request_product(PATH_GET_CID_LIST, service_type, param)
+
+    def request_token(self, service_type: ServiceType) -> str:
+        """
+        토큰 반환 요청.
+        :param service_type: 서비스 타입
+        :return: 보유 중인 유효한 토큰이 있는 경우 반환, 없는 경우 신규 발급 후 반환.
+        """
+        if not self.check_client_info(service_type):
+            return ''
+
+        access_token = self.get_access_token(service_type)
+        if access_token is not None and access_token != '':
+            base64_str = access_token.split('.')[1]
+            decoded_bytes = base64.b64decode(base64_str + ('=' * (-len(base64_str) % 4)))
+            dict_str = decoded_bytes.decode('utf-8')
+            data = json.loads(dict_str)
+
+            if check_validity(data['exp']):
+                return access_token
+
+        client_id, client_secret = self.get_client_info(service_type)
+        token_dict = request_token(client_id, client_secret)
+        if token_dict is not None:
+            new_token = token_dict['access_token']
+            self.set_access_token(new_token, service_type)
+            return new_token

@@ -90,3 +90,23 @@ def test_request_certification_invalid_2way():
     assert exist_cid(succ_res)
 
 
+def test_request_token():
+    codef = Codef()
+    service_type = ServiceType.SANDBOX
+    # 발급 받은 토큰은 자동 셋팅된다
+    token = codef.request_token(service_type)
+    assert codef.get_access_token(service_type) == token
+
+    # 아직 유요한 토큰이라면 보유하고 있는 토큰을 반환한다
+    new_token = codef.request_token(service_type)
+    assert token == new_token
+
+    # 만료된 토큰이라면 새로운 토큰을 발급받는다
+    expired_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXJ2aWNlX3R5cGUiOiIyIiwic2NvcGUiOlsicmVhZCJdLCJzZXJ2aWNlX25vIjoiMDAwMDAwMDAwMDAwIiwiZXhwIjoxNjAxNDQ0OTc5LCJhdXRob3JpdGllcyI6WyJSRUxBWSJdLCJqdGkiOiI4NjRhMDcwOS1jNTM2LTQyZTQtOTg0Ni0wMmZlZTk4NTE5OWYiLCJjbGllbnRfaWQiOiI1MDM4YTYzNS00ZjJkLTQ2MDUtOTI1ZS0wMTk5MDM1MTIyYjgifQ.QdviRdu0gBOYHhVlX-X0CE20lfrfVWC-teZlIYKPMqh-TL5odP8WjSSwEkK8SupFmo7BpgSZEVaYPvzY5R6700RKODHBQm-zZuxDNMn4xEGhOvw9IBo8aJerpfas0dxD5HeauNf_nE0wt3MrHNfu1g0FCWyOBTcdeGa3LGc5StP42r--DIShrhV1EyWGqOmTHL-Bl6VdedV59-_yLeD-pxFd0tpF5pwuFBaB_KHt5wGpjkWcRbYGW1dV-_0cwmKbf1Afq2iO633QEibBIA22cIndCTL1zq2qgeS71cINOb0ZTX4-bS5mpUfpkYtvLGLG-f51d_nTzdMz2LR7ojIuXw'
+    codef.set_access_token(expired_token, service_type)
+    new_token = codef.request_token(service_type)
+    assert expired_token != new_token
+    assert expired_token != codef.get_access_token(service_type)
+
+
+

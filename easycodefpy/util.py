@@ -1,4 +1,5 @@
 import base64
+import time
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5 as PKCS1
 
@@ -30,3 +31,16 @@ def encrypt_rsa(text: str, public_key: str) -> str:
 
     return base64.b64encode(cipher_text).decode('utf-8')
 
+
+def check_validity(exp: int) -> bool:
+    """
+    토큰 정합성 체크를 도와주는 유틸
+    :param exp: 토큰 내부 만료 시간
+    :return: 유효하다면 True
+    """
+    now = int(round(time.time() * 1000))
+    exp = int(str(exp) + '000')
+    if now > exp or (exp - now < (60 * 60 * 1000)):
+        return False
+
+    return True
