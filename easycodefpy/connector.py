@@ -8,7 +8,6 @@ from .properties import\
     ServiceType,\
     get_codef_domain
 from .message import *
-from .easycodefpy import Codef
 
 
 def request_token(client_id: str, client_secret: str) -> Union[dict, None]:
@@ -66,7 +65,7 @@ def request_product(url: str, token: str, body_str: str) -> dict:
 def set_token(
         client_id: str,
         client_secret: str,
-        codef: Codef,
+        codef,
         service_type: ServiceType
 ):
     """
@@ -93,7 +92,7 @@ def set_token(
             i += 1
 
 
-def excute(url_path: str, body: dict, codef: Codef, service_type: ServiceType) -> dict:
+def execute(url_path: str, body: dict, codef, service_type: ServiceType) -> dict:
     """
     API 요청 실행 함수.
     실제 사용자에게 제공되는 함수 내부에서 이 함수를 호출해서 사용할 것을 권장한다.
@@ -106,6 +105,6 @@ def excute(url_path: str, body: dict, codef: Codef, service_type: ServiceType) -
     req_domain = get_codef_domain(service_type)
     client_id, client_secret = codef.get_client_info(service_type)
     set_token(client_id, client_secret, codef, service_type)
-    body = json.dumps(body)
+    body = json.dumps(body, ensure_ascii=False)
     return request_product(req_domain + url_path, codef.get_access_token(service_type), body)
 

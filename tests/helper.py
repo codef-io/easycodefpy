@@ -27,3 +27,13 @@ def create_param_for_create_cid() -> dict:
 			'password': password,
 		}],
 	}
+
+
+def exist_cid(data: dict) -> bool:
+	code = data['result']['code']
+	if code == 'CF-00000':
+		cid = data['data']['connectedId']
+		if cid is not None and cid != '':
+			return True
+	else:
+		return False

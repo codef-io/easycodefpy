@@ -1,4 +1,3 @@
-import json
 from .helper import *
 from easycodefpy.connector import *
 from easycodefpy.properties import\
@@ -14,16 +13,6 @@ def test_request_token():
     assert res is not None
     token = res['access_token']
     assert token is not None and token != ''
-
-
-def exist_cid(data: dict) -> bool:
-    code = data['result']['code']
-    if code == 'CF-00000':
-        cid = data['data']['connectedId']
-        if cid is not None and cid != '':
-            return True
-    else:
-        return False
 
 
 def test_request_product():
@@ -47,10 +36,10 @@ def test_set_token():
     assert token != ''
 
 
-def test_excute() :
+def test_excute():
     codef = Codef()
     param = create_param_for_create_cid()
-    res = excute(PATH_CREATE_ACCOUNT, param, codef, ServiceType.SANDBOX)
+    res = execute(PATH_CREATE_ACCOUNT, param, codef, ServiceType.SANDBOX)
     assert res is not None
     assert exist_cid(res)
 

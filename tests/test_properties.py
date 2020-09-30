@@ -1,4 +1,3 @@
-# from easycodefpy.properties import get_codef_domain, ServiceType
 from easycodefpy.properties import *
 
 
