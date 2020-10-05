@@ -43,16 +43,10 @@ def test_excute():
     assert res is not None
     assert exist_cid(res)
 
-# def test_fail_set_token_must_unauth():
-#     codef = Codef()
-#     codef.public_key = 'public_key'
-#     codef.set_client_info('id', 'secret')
-#
-#     param = {
-#         'connectedId': '8PQI4dQ......hKLhTnZ',
-#         'organization': '0004',
-#         'identity': '1130000627',
-#     }
-#     product_url = '/v1/kr/card/b/account/card-list'
-
-
+def test_excute_by_unicode():
+    codef = Codef()
+    param = create_param_for_create_cid()
+    param['dummy'] = '한글'
+    res = execute(PATH_CREATE_ACCOUNT, param, codef, ServiceType.SANDBOX)
+    assert res is not None
+    assert exist_cid(res)

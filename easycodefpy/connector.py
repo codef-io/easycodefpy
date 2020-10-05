@@ -1,6 +1,7 @@
 import requests
 import base64
 import json
+from urllib import parse
 from typing import Union
 from .properties import\
     OAUTH_DOMAIN,\
@@ -45,11 +46,16 @@ def request_product(url: str, token: str, body_str: str) -> dict:
     }
     if token != '' and token is not None:
         headers['Authorization'] = 'Bearer ' + token
+
+    if body_str is not None and body_str != '':
+        body_str = parse.quote(body_str)
+
     with requests.post(url, data=body_str, headers=headers) as res:
         s_code = res.status_code
         codes = requests.codes
         if s_code == codes.ok:
-            return res.json()
+            data_str = parse.unquote_plus(res.text)
+            return json.loads(data_str)
         elif s_code == codes.bad:
             return MESSAGE_BAD_REQUEST
         elif s_code == codes.unauthorized:
