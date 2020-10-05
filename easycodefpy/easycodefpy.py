@@ -162,7 +162,7 @@ class Codef(object):
         if not _has_two_way_keyword(param):
             return json.dumps(MESSAGE_INVALID_2WAY_INFO, ensure_ascii=False)
 
-        res = execute(product_path, param, self, param)
+        res = execute(product_path, param, self, service_type)
         return json.dumps(res, ensure_ascii=False)
 
     def check_client_info(self, service_type: ServiceType) -> bool:
