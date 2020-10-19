@@ -18,8 +18,12 @@ with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 
-with open('requirements.txt') as f:
-    requires = f.read().strip().split('\n')
+requires = [
+    'pycryptodome>=3.9.8',
+    'requests>=2.24.0',
+]
+# with open('requirements.txt') as f:
+#     requires = f.read().strip().split('\n')
 
 setup(
     name=get_metadata('__title__'),
@@ -38,7 +42,7 @@ setup(
         'codef-py',
         'codef-python'
     ],
-    python_requires='>=3',
+    python_requires='>=3.5',
     zip_safe=False,
     classifiers=[
         'Programming Language :: Python :: 3.7',
