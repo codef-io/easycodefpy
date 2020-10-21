@@ -9,6 +9,8 @@ CODEF는 온라인에 흩어진 데이터를 클라이언트 엔진과 웹 API �
 easycodefpy는 CODEF API 연동 개발을 돕는 라이브러리 유틸입니다.  
 사용을 위해서는 [홈페이지](https://codef.io/) 가입 후 데모/정식 서비스 신청을 통해 자격 증명을 위한 클라이언트 정보 등을 발급받아야 하며 사용 가능한 모든 API의 엔드포인트(은행, 카드, 보험, 증권, 공공, 기타)와 요청/응답 항목은 모두 [개발가이드](https://developer.codef.io/)를 통해 확인할 수 있습니다.
 
+> 비동기 I/O를 사용하실 예정이라면 [aio-easycodefpy](https://github.com/codef-io/aio-easycodefpy)를 참고하시면 됩니다.
+
 ![Python version](https://img.shields.io/badge/Python%20version-%3E%3D3.5-green)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/codef-io/easycodefpy/blob/master/LICENSE)
 
